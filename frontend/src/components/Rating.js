@@ -26,6 +26,7 @@ const Rating = ({ value, text, color }) => {
 
 Rating.defaultProps = {
   color: '#f8e825',
+  value: 0, //otherwise will get undefined error because useEffect gets called after rendering component
 }
 
 Rating.propTypes = {

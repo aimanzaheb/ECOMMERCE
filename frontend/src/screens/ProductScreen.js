@@ -10,13 +10,14 @@ const ProductScreen = ({ match }) => {
 
   useEffect(() => {
     //cant make this arrow func async
+
     const fetchProducts = async () => {
       const { data } = await axios.get(`/api/product/${match.params.id}`) //destruring
       setProduct(data)
     }
 
     fetchProducts()
-  }, [])
+  }, [match]) //rerun only when match changes
 
   return (
     <>
