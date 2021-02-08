@@ -14,7 +14,7 @@ const App = () => {
           <Route path='/' component={HomeScreen} exact />
           {/* exact - prevent HomeScreen load on url '/anything' */}
 
-          <Route path='/product/:id' component={ProductScreen} />
+          <Route path='/products/:id' component={ProductScreen} />
         </Container>
       </main>
       <Footer />
