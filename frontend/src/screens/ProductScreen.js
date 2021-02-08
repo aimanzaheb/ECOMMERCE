@@ -12,7 +12,7 @@ const ProductScreen = ({ match }) => {
     //cant make this arrow func async
 
     const fetchProducts = async () => {
-      const { data } = await axios.get(`/api/product/${match.params.id}`) //destruring
+      const { data } = await axios.get(`/api/products/${match.params.id}`) //destruring
       setProduct(data)
     }
 

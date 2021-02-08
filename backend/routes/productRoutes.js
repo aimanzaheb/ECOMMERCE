@@ -19,14 +19,18 @@ router.get(
 //  @access   Public
 router.get(
   '/:id',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res, next) => {
     const product = await Product.findById(req.params.id)
     if (product) {
       res.json(product)
     } else {
-      res.status(404).json({ message: 'Product not found' }) //CastError: Cast to ObjectId failed with status error 500 if you put wrong type of _id i.e. not 12 byte binary BSON type
+      res.status(404)
+      // throw new Error('Product not found') //its vanilla js
+
+      //alternative
+      // const error = new Error('Product not found')
+      // next(error)
     }
-    res.json(product)
   })
 )
 
