@@ -10,7 +10,7 @@ const App = () => {
     <Router>
       <Header />
       <main className='py-3'>
-        <Container>
+        <Container fluid='xl'>
           <Route path='/' component={HomeScreen} exact />
           {/* exact - prevent HomeScreen load on url '/anything' */}
 
