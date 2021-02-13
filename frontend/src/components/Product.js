@@ -30,4 +30,5 @@ const Product = ({ product }) => {
   )
 }
 
+//const ProductWithRouter = withRouter(Product) //if want to access props such as history, match etc in this component
 export default Product
