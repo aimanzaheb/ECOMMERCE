@@ -22,19 +22,18 @@ export const productListReducer = (state = { products: [] }, action) => {
   }
 }
 
-const productDetailsInitialState = { loading: true, product: { reviews: [] } }
 export const productDetailsReducer = (
-  state = productDetailsInitialState, //passed previous/initial state
+  state = { product: { reviews: [] } }, //passed previous/initial state
   action
 ) => {
   switch (action.type) {
     case PRODUCT_DETAILS_REQUEST:
-      return productDetailsInitialState //new state
+      return { loading: true, ...state } //new state
     case PRODUCT_DETAILS_SUCCESS:
       return { loading: false, product: action.payload }
     case PRODUCT_DETAILS_FAIL:
       return { loading: false, error: action.payload }
     default:
-      return productDetailsInitialState //reset state on any other action even actions dispatch by HomeScreen
+      return state
   }
 }
