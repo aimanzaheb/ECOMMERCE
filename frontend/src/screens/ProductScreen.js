@@ -6,6 +6,7 @@ import Rating from '../components/Rating'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
 import { listProductDetails } from '../actions/productActions'
+import { addToCart } from '../actions/cartActions'
 
 const ProductScreen = ({ history, match }) => {
   //recommend useParams instead match https://css-tricks.com/the-hooks-of-react-router/
@@ -23,7 +24,8 @@ const ProductScreen = ({ history, match }) => {
   }, [dispatch, match]) //rerun only when match changes
 
   const addToCartHandler = () => {
-    history.push(`/cart/${match.params.id}?qty=${qty}`) //redirect url
+    dispatch(addToCart(product._id, qty))
+    history.push(`/cart`) //redirect url
   }
 
   return (
