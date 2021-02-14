@@ -20,9 +20,9 @@ const getProductById = asyncHandler(async (req, res) => {
     res.json(product)
   } else {
     res.status(404)
-    // throw new Error('Product not found') //its vanilla js
+    throw new Error('Product not found') //implicit & explicit exception will be handle by custom errorMiddleware because of express-async-handler
 
-    //alternative
+    //alternative way without express-async-handler but implicit exceptions will handle by default error handler so it cant be reach to frontend
     // const error = new Error('Product not found')
     // next(error)
   }

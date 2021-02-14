@@ -26,4 +26,17 @@ const authUser = asyncHandler(async (req, res) => {
   }
 })
 
-export { authUser }
+//  @desc     Get user profile
+//  @route    GET /api/users/profile
+//  @access   Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.userId).select('-password')
+  if (user) {
+    res.json(user)
+  } else {
+    res.status(404)
+    throw new Erro('User not found')
+  }
+})
+
+export { authUser, getUserProfile }
