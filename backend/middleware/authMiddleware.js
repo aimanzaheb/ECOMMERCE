@@ -13,7 +13,6 @@ const protect = asyncHandler(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET) //invalid signature exception on invalid token
       req.userId = decoded.userId
       next()
-      console.log(req.userId)
     } catch (error) {
       console.log(error)
       res.status(401)
