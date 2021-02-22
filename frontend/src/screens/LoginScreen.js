@@ -11,7 +11,7 @@ const LoginScreen = ({ location, history }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const redirect = location.search ? location.search.split('=')[1] : '/'
+  const redirect = location.search ? location.search.split('=')[1] : '/' //recommend useLocation hook as in RegisterScreen
 
   const dispatch = useDispatch()
 
@@ -64,6 +64,10 @@ const LoginScreen = ({ location, history }) => {
         <Col>
           New Customer?{' '}
           <Link to={redirect ? `register?redirect=${redirect}` : '/register'}>
+            {' '}
+            {/* redirect is used when you click 'Proceed to checkout' in CartScreen, because it links to login page (route /login?redirect=shopping) and then once you're logged in you go directly to the checkout screen.
+
+Else if you go to the LoginScreen directly from the login link, you go to the route /login (without redirect) and once you're logged in you're redirected to the home page */}
             Register
           </Link>
         </Col>
