@@ -83,10 +83,18 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.name = req.body.name || user.name
     user.email = req.body.email || user.email
     if (req.body.password) {
-      user.password = req.body.password
+      user.password = req.body.password //pass will get hashed automatic because of userModel
     }
 
-    const updatedUser = await user.save() //pass will get hashed automatic because of userModel
+    let updatedUser
+    try {
+      updatedUser = await user.save() //used try catch because i cant pass callback function(err) here when using async/await
+    } catch (err) {
+      if (err.errors && err.errors.email && err.errors.email.message)
+        //used mongoose-unique-validator in model for custom validation
+        throw new Error(err.errors.email.message)
+      else throw err
+    }
 
     res.json({
       _id: updatedUser._id,
@@ -97,7 +105,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     })
   } else {
     res.status(404)
-    throw new Erro('User not found')
+    throw new Error('User not found')
   }
 })
 

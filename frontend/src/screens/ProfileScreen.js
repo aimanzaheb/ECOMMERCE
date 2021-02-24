@@ -3,7 +3,8 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getUserDetails } from '../actions/userActions'
+import { getUserDetails, updateUserProfile } from '../actions/userActions'
+import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 
 const ProfileScreen = ({ history }) => {
   const [name, setName] = useState('')
@@ -15,15 +16,21 @@ const ProfileScreen = ({ history }) => {
   const dispatch = useDispatch()
 
   const userDetails = useSelector((state) => state.userDetails)
-  const { loading, error, user } = userDetails
+  const { loading, user } = userDetails
+
+  const userUpdateProfile = useSelector((state) => state.userUpdateProfile)
+  let { success } = userUpdateProfile
+
+  const error = userDetails.error ?? userUpdateProfile.error
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
 
   useEffect(() => {
+    //rerun when dependency changes
     if (!userInfo) {
       history.push('/login')
-    } else if (!user.name) {
+    } else if (!user || !user.name) {
       dispatch(getUserDetails('profile'))
     } else {
       setName(user.name)
@@ -31,12 +38,19 @@ const ProfileScreen = ({ history }) => {
     }
   }, [dispatch, history, userInfo, user])
 
+  useEffect(() => {
+    //run only once on unmount because it doesnt has dependency such as userInfo
+    return () => {
+      dispatch({ type: USER_UPDATE_PROFILE_RESET })
+    }
+  }, [dispatch])
+
   const submitHandler = (e) => {
     e.preventDefault()
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
     } else {
-      //DISPATCH UPDATE PROFILE
+      dispatch(updateUserProfile({ id: user._id, name, email, password }))
     }
   }
 
@@ -46,15 +60,19 @@ const ProfileScreen = ({ history }) => {
         <h2>User Profile</h2>
         {message && <Message variant='danger'>{message}</Message>}
         {error && <Message variant='danger'>{error}</Message>}
+        {success && <Message variant='success'>Profile Updated</Message>}
+        {(success = false)}
         {loading && <Loader />}
         <Form onSubmit={submitHandler}>
           <Form.Group controlId='name'>
             <Form.Label>Name</Form.Label>
             <Form.Control
-              type='name'
+              type='text'
               placeholder='Enter Name'
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value)
+              }}
             ></Form.Control>
           </Form.Group>
 

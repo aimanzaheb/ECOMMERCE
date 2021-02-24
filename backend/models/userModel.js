@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
+import uniqueValidator from 'mongoose-unique-validator'
 
 const userSchema = mongoose.Schema(
   {
@@ -11,6 +12,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      uniqueCaseInsensitive: true,
     },
     password: {
       type: String,
@@ -39,6 +41,10 @@ userSchema.pre('save', async function (next) {
   }
   const salt = await bcrypt.genSalt(10)
   this.password = await bcrypt.hash(this.password, salt)
+})
+
+userSchema.plugin(uniqueValidator, {
+  message: 'Error, {VALUE} {PATH} already exists',
 })
 
 const User = mongoose.model('User', userSchema)
