@@ -31,8 +31,15 @@ const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
   : null
 
+const shippingAddressFromStorage = localStorage.getItem('shippingAddress')
+  ? JSON.parse(localStorage.getItem('shippingAddress'))
+  : {}
+
 const initialState = {
-  cart: { cartItems: cartItemsFromStorage }, //overwrite initial cart state set by cart reducer
+  cart: {
+    cartItems: cartItemsFromStorage,
+    shippingAddress: shippingAddressFromStorage,
+  }, //overwrite initial cart state set by cart reducer
   userLogin: { userInfo: userInfoFromStorage },
 }
 
