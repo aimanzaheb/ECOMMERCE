@@ -24,15 +24,15 @@ const ProductScreen = ({ history, match }) => {
   }, [dispatch, match]) //rerun only when match changes
 
   const addToCartHandler = () => {
-    dispatch(addToCart(product._id, qty))
+    dispatch(addToCart(product._id, Number(qty)))
     history.push(`/cart`) //redirect url
   }
 
   return (
     <>
-      <Link className='btn btn-light my-3' to='/'>
+      <button className='btn btn-light my-3' onClick={history.goBack}>
         Go Back
-      </Link>
+      </button>
       {loading ? (
         <Loader />
       ) : error ? (
