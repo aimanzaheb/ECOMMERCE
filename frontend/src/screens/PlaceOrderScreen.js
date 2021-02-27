@@ -9,11 +9,14 @@ import {
   Card,
   ListGroupItem,
 } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
+import { createOrder } from '../actions/orderActions'
 
 const PlaceOrderScreen = () => {
+  const dispatch = useDispatch()
+
   const cart = useSelector((state) => state.cart)
 
   //Calculate price
@@ -33,8 +36,21 @@ const PlaceOrderScreen = () => {
     minimumFractionDigits: 2,
   })
 
+  const orderCreate = useSelector((state) => state.orderCreate)
+  const { order, success, error } = orderCreate
+
   const placeOrderHandler = () => {
-    console.log('place')
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      })
+    )
   }
 
   return (
@@ -42,6 +58,7 @@ const PlaceOrderScreen = () => {
       {(!Object.keys(cart.shippingAddress).length || !cart.paymentMethod) && (
         <Redirect to='/shipping' />
       )}
+      {success && <Redirect to={`/order/${order._id}`} />}
       <CheckoutSteps step1 step2 step3 />
       <Row>
         <Col md={8}>
@@ -125,6 +142,9 @@ const PlaceOrderScreen = () => {
                   <Col>Total</Col>
                   <Col>{currency.format(cart.totalPrice)}</Col>
                 </Row>
+              </ListGroupItem>
+              <ListGroupItem>
+                {error && <Message variant='danger'>{error}</Message>}
               </ListGroupItem>
               <ListGroupItem>
                 <Button
