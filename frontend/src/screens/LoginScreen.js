@@ -20,7 +20,7 @@ const LoginScreen = ({ location, history }) => {
 
   useEffect(() => {
     if (userInfo) {
-      history.push(redirect)
+      history.replace(redirect) //back will not work on shipping screen if we used history.push()
     }
   }, [history, userInfo, redirect])
 
