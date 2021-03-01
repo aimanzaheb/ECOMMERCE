@@ -12,6 +12,7 @@ const protect = asyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1]
       const decoded = jwt.verify(token, process.env.JWT_SECRET) //invalid signature exception on invalid token which will be caught by catch
       req.userId = decoded.userId
+      req.isAdmin = decoded.isAdmin
       next()
     } catch (error) {
       console.log(error)

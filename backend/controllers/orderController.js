@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import Order from '../models/orderModel.js'
+import User from '../models/userModel.js'
 
 //  @desc     Create new order
 //  @route    POST /api/orders
@@ -36,4 +37,26 @@ const addOrderItems = asyncHandler(async (req, res) => {
   }
 })
 
-export { addOrderItems }
+//  @desc     Get order by ID
+//  @route    GET /api/orders/:id
+//  @access   Private
+const getOrderById = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id).populate(
+    'user',
+    'name email'
+  ) //populating user model through userId in orderModel
+
+  if (!order) {
+    res.status(404)
+    throw new Error('Order not found')
+  }
+  if (!req.isAdmin && !order.user._id.equals(req.userId)) {
+    //not work order.user._id === req.userId for mongo id
+    res.status(404)
+    throw new Error('Order not found')
+  }
+
+  res.json(order)
+})
+
+export { addOrderItems, getOrderById }
