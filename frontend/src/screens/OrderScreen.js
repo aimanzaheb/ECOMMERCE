@@ -51,7 +51,7 @@ const OrderScreen = ({ match }) => {
       purchase_units: [
         {
           amount: {
-            value: order.totalPrice,
+            value: order.totalPrice.toFixed(2), //without toFixed you may get error unproccesable entity in paypal because of long no. of digits
           },
         },
       ],
