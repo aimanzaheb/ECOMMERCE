@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import {
   Button,
@@ -13,8 +13,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { createOrder } from '../actions/orderActions'
+import { ORDER_CREATE_RESET } from '../constants/orderConstants'
 
-const PlaceOrderScreen = () => {
+const PlaceOrderScreen = ({ history }) => {
   const dispatch = useDispatch()
 
   const cart = useSelector((state) => state.cart)
@@ -38,6 +39,12 @@ const PlaceOrderScreen = () => {
 
   const orderCreate = useSelector((state) => state.orderCreate)
   const { order, success, error } = orderCreate
+
+  const willMount = useRef(true)
+  if (willMount.current) {
+    dispatch({ type: ORDER_CREATE_RESET }) //dispatch before component mount only once
+    willMount.current = false
+  }
 
   const placeOrderHandler = () => {
     dispatch(
