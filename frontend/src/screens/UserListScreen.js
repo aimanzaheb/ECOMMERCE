@@ -6,19 +6,27 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listUsers } from '../actions/userActions'
 
-const UserListScreen = () => {
+const UserListScreen = ({ history }) => {
   const dispatch = useDispatch()
 
   const userList = useSelector((state) => state.userList)
-
   const { loading, error, users } = userList
 
+  const userLogin = useSelector((state) => state.userLogin)
+  const { userInfo } = userLogin
+
+  const isAdminLoggedIn = userInfo && userInfo.isAdmin
   useEffect(() => {
+    if (!isAdminLoggedIn) {
+      history.push('/login')
+      return
+    }
     dispatch(listUsers())
-  }, [dispatch])
+  }, [dispatch, history, isAdminLoggedIn])
 
   const deleteHandler = (id) => {}
 
+  if (!isAdminLoggedIn) return <></> //prevent unnecessary flash when redirect using history
   return (
     <>
       <h1>Users</h1>
