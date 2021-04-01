@@ -4,7 +4,7 @@ import { Table, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { listUsers } from '../actions/userActions'
+import { listUsers, deleteUser } from '../actions/userActions'
 
 const UserListScreen = ({ history }) => {
   const dispatch = useDispatch()
@@ -15,6 +15,9 @@ const UserListScreen = ({ history }) => {
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
 
+  const userDelete = useSelector((state) => state.userDelete)
+  const { success: isDeleteSuccess } = userDelete
+
   const isAdminLoggedIn = userInfo && userInfo.isAdmin
   useEffect(() => {
     if (!isAdminLoggedIn) {
@@ -22,9 +25,11 @@ const UserListScreen = ({ history }) => {
       return
     }
     dispatch(listUsers())
-  }, [dispatch, history, isAdminLoggedIn])
+  }, [dispatch, history, isAdminLoggedIn, isDeleteSuccess])
 
-  const deleteHandler = (id) => {}
+  const deleteHandler = (id) => {
+    if (window.confirm('Are you sure?')) dispatch(deleteUser(id))
+  }
 
   if (!isAdminLoggedIn) return <></> //prevent unnecessary flash when redirect using history
   return (
@@ -47,7 +52,7 @@ const UserListScreen = ({ history }) => {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id}>
+              <tr key={user._id}>
                 <td>{user._id}</td>
                 <td>{user.name}</td>
                 <td>
@@ -57,7 +62,7 @@ const UserListScreen = ({ history }) => {
                   {user.isAdmin ? (
                     <i className='fas fa-check' style={{ color: 'green' }}></i>
                   ) : (
-                    <i class='fas fa-times' style={{ color: 'red' }}></i>
+                    <i className='fas fa-times' style={{ color: 'red' }}></i>
                   )}
                 </td>
                 <td>
@@ -69,6 +74,7 @@ const UserListScreen = ({ history }) => {
                   <Button
                     variant='danger'
                     className='btn-sm'
+                    disabled={userInfo._id === user._id}
                     onClick={() => deleteHandler(user._id)}
                   >
                     <i className='fas fa-trash'></i>
