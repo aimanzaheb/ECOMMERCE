@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listUsers, deleteUser } from '../actions/userActions'
+import { USER_DELETE_RESET } from '../constants/userConstants'
 
 const UserListScreen = ({ history }) => {
   const dispatch = useDispatch()
@@ -29,6 +30,7 @@ const UserListScreen = ({ history }) => {
   useEffect(() => {
     if (isUserDeleteSuccess) {
       dispatch(listUsers())
+      dispatch({ type: USER_DELETE_RESET })
       alert('Deleted Successfully')
     }
   }, [dispatch, isUserDeleteSuccess])
