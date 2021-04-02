@@ -132,6 +132,51 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.json({ message: 'User removed' })
 })
 
+//  @desc     Get user by ID
+//  @route    GET /api/users/:id
+//  @access   Private/Admin
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password')
+  if (!user) {
+    res.status(404)
+    throw new Error('User not found')
+  }
+  res.json(user)
+})
+
+//  @desc     Update user
+//  @route    PUT /api/users/:id
+//  @access   Private/Admin
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password')
+
+  if (user) {
+    user.name = req.body.name || user.name
+    user.email = req.body.email || user.email
+    user.isAdmin = req.body.isAdmin ?? user.isAdmin //not used or opertor because we cant set user.isAdmin to false with it
+
+    let updatedUser
+    try {
+      updatedUser = await user.save() //used try catch because i cant pass callback function(err) here when using async/await
+    } catch (err) {
+      if (err.errors && err.errors.email && err.errors.email.message)
+        //used mongoose-unique-validator in model for custom validation
+        throw new Error(err.errors.email.message)
+      else throw err
+    }
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+})
+
 export {
   authUser,
   registerUser,
@@ -139,4 +184,6 @@ export {
   updateUserProfile,
   getUsers,
   deleteUser,
+  getUserById,
+  updateUser,
 }
