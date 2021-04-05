@@ -5,11 +5,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
-import { getUserDetails } from '../actions/userActions'
-import { USER_DETAILS_RESET } from '../constants/userConstants'
+import { getUserDetails, updateUser } from '../actions/userActions'
+import {
+  USER_DETAILS_RESET,
+  USER_UPDATE_FAIL,
+  USER_UPDATE_RESET,
+} from '../constants/userConstants'
 
 const UserEditScreen = ({ match, history }) => {
   const userId = match.params.id
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
@@ -18,6 +23,13 @@ const UserEditScreen = ({ match, history }) => {
 
   const userDetails = useSelector((state) => state.userDetails)
   const { loading, error, user } = userDetails
+
+  const userUpdate = useSelector((state) => state.userUpdate)
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate,
+  } = userUpdate
 
   useEffect(() => {
     if (!user.name || user._id !== userId) {
@@ -30,6 +42,13 @@ const UserEditScreen = ({ match, history }) => {
   }, [user, dispatch, userId])
 
   useEffect(() => {
+    if (successUpdate) {
+      dispatch({ type: USER_UPDATE_RESET })
+      history.push('/admin/userlist')
+    }
+  }, [dispatch, history, successUpdate])
+
+  useEffect(() => {
     return () => {
       dispatch({ type: USER_DETAILS_RESET }) //now user profile screen can send new request for logged in user detail
     }
@@ -37,6 +56,7 @@ const UserEditScreen = ({ match, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
+    dispatch(updateUser({ id: userId, name, email, isAdmin }))
   }
 
   return (
@@ -46,6 +66,8 @@ const UserEditScreen = ({ match, history }) => {
       </Link>
       <FormContainer>
         <h1>Edit User</h1>
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
