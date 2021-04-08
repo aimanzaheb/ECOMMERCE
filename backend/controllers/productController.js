@@ -22,10 +22,31 @@ const getProductById = asyncHandler(async (req, res) => {
     res.status(404)
     throw new Error('Product not found') //implicit & explicit exception will be handle by custom errorMiddleware because of express-async-handler
 
-    //alternative way without express-async-handler but implicit exceptions will handle by default error handler so it cant be reach to frontend
+    //alternative way without express-async-handler but implicit exceptions will handle by 'default error handler' so it cant be reach to frontend
     // const error = new Error('Product not found')
     // next(error)
   }
 })
 
-export { getProductById, getProducts }
+//  @desc     Delete single product
+//  @route    DELETE /api/products/:id
+//  @access   Private/Admin
+const deleteProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id)
+
+  if (product) {
+    //if( product.user._id.equals(req.userId) ) //to delete only by that admin who created product
+
+    await product.remove()
+    res.json({ message: 'Product removed' })
+  } else {
+    res.status(404)
+    throw new Error('Product not found') //implicit & explicit exception will be handle by custom errorMiddleware because of express-async-handler
+
+    //alternative way without express-async-handler but implicit exceptions will handle by 'default error handler' so it cant be reach to frontend
+    // const error = new Error('Product not found')
+    // next(error)
+  }
+})
+
+export { getProductById, getProducts, deleteProduct }
