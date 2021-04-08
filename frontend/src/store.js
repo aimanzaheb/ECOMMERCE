@@ -5,6 +5,7 @@ import {
   productListReducer,
   productDetailsReducer,
   productDeleteReducer,
+  productCreateReducer,
 } from './reducers/productReducers.js'
 import { cartReducer } from './reducers/cartReducers'
 import {
@@ -27,6 +28,7 @@ const reducer = combineReducers({
   productList: productListReducer, //productList is now part of global state
   productDetails: productDetailsReducer,
   productDelete: productDeleteReducer,
+  productCreate: productCreateReducer,
   cart: cartReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,

@@ -8,7 +8,6 @@ import FormContainer from '../components/FormContainer'
 import { getUserDetails, updateUser } from '../actions/userActions'
 import {
   USER_DETAILS_RESET,
-  USER_UPDATE_FAIL,
   USER_UPDATE_RESET,
 } from '../constants/userConstants'
 
