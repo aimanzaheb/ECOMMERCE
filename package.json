@@ -1,7 +1,7 @@
 {
   "name": "ecommerce",
   "version": "1.0.0",
-  "description": "MEARN Ecommerce App",
+  "description": "MERN Ecommerce App",
   "main": "server.js",
   "type": "module",
   "scripts": {
