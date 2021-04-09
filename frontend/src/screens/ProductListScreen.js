@@ -35,6 +35,7 @@ const ProductListScreen = ({ history, match }) => {
     loading: loadingCreate,
     error: errorCreate,
     success: isProductCreateSuccess,
+    product: createdProduct,
   } = productCreate
 
   const isAdminLoggedIn = userInfo && userInfo.isAdmin
@@ -56,11 +57,10 @@ const ProductListScreen = ({ history, match }) => {
 
   useEffect(() => {
     if (isProductCreateSuccess) {
-      dispatch(listProducts())
       dispatch({ type: PRODUCT_CREATE_RESET })
-      alert('Product Created Successfully')
+      history.push(`/admin/product/${createdProduct._id}/edit`)
     }
-  }, [dispatch, isProductCreateSuccess])
+  }, [dispatch, history, isProductCreateSuccess, createdProduct])
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure?')) {
