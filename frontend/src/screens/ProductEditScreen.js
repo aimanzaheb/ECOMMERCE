@@ -5,11 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
-import { listProductDetails } from '../actions/productActions'
-// import {
-//   USER_DETAILS_RESET,
-//   USER_UPDATE_RESET,
-// } from '../constants/userConstants'
+import { listProductDetails, updateProduct } from '../actions/productActions'
+import { PRODUCT_UPDATE_RESET } from '../constants/productConstants'
 
 const ProductEditScreen = ({ match, history }) => {
   const productId = match.params.id
@@ -27,12 +24,12 @@ const ProductEditScreen = ({ match, history }) => {
   const productDetails = useSelector((state) => state.productDetails)
   const { loading, error, product } = productDetails
 
-  // const userUpdate = useSelector((state) => state.userUpdate)
-  // const {
-  //   loading: loadingUpdate,
-  //   error: errorUpdate,
-  //   success: successUpdate,
-  // } = userUpdate
+  const productUpdate = useSelector((state) => state.productUpdate)
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate,
+  } = productUpdate
 
   useEffect(() => {
     if (!product.name || product._id !== productId) {
@@ -42,28 +39,38 @@ const ProductEditScreen = ({ match, history }) => {
       setPrice(product.price)
       setImage(product.image)
       setBrand(product.brand)
-      setCategory(product.Category)
+      setCategory(product.category)
       setCountInStock(product.countInStock)
       setDescription(product.description)
     }
   }, [product, dispatch, productId])
 
-  // useEffect(() => {
-  //   if (successUpdate) {
-  //     dispatch({ type: USER_UPDATE_RESET })
-  //     history.push('/admin/userlist')
-  //   }
-  // }, [dispatch, history, successUpdate])
+  useEffect(() => {
+    if (successUpdate) {
+      dispatch({ type: PRODUCT_UPDATE_RESET })
+      history.push('/admin/productlist')
+    }
+  }, [dispatch, history, successUpdate])
 
   // useEffect(() => {
   //   return () => {
-  //     dispatch({ type: USER_DETAILS_RESET }) //now user profile screen can send new request for logged in user detail
+  //     dispatch({ type: PRODUCT_DETAILS_RESET }) //we can also reset redux state on component unmount to keep edit form in sync if re-update same product after update.
+  // Otherwise old data will show. But alternatively we are  dispatch({type: PRODUCT_DETAILS_SUCCESS,payload: data}) in updateProduct() action to keep state in sync
   //   }
   // }, [dispatch])
 
   const submitHandler = (e) => {
     e.preventDefault()
-    // dispatch(updateUser({ id: userId, name, email, isAdmin }))
+    dispatch(
+      updateProduct({
+        _id: productId,
+        name,
+        price,
+        category,
+        description,
+        countInStock,
+      })
+    )
   }
 
   return (
@@ -73,8 +80,9 @@ const ProductEditScreen = ({ match, history }) => {
       </Link>
       <FormContainer>
         <h1>Edit Product</h1>
-        {/* {loadingUpdate && <Loader />}
-        {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>} */}
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
+
         {loading ? (
           <Loader />
         ) : error ? (
