@@ -10,18 +10,19 @@ import {
   getUserById,
   updateUser,
 } from '../controllers/userController.js'
-import { protect, admin } from '../middleware/authMiddleware.js'
 
-router.route('/').post(registerUser).get(protect, admin, getUsers)
+import { authToken, authAdmin } from '../middleware/authMiddleware.js'
+
+router.route('/').post(registerUser).get(authToken, authAdmin, getUsers)
 router.post('/login', authUser)
 router
   .route('/profile')
-  .get(protect, getUserProfile)
-  .put(protect, updateUserProfile)
+  .get(authToken, getUserProfile)
+  .put(authToken, updateUserProfile)
 router
   .route('/:id')
-  .delete(protect, admin, deleteUser)
-  .get(protect, admin, getUserById)
-  .put(protect, admin, updateUser)
+  .delete(authToken, authAdmin, deleteUser)
+  .get(authToken, authAdmin, getUserById)
+  .put(authToken, authAdmin, updateUser)
 
 export default router

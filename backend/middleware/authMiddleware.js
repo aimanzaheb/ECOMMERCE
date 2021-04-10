@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import asyncHandler from 'express-async-handler'
 
-const protect = asyncHandler(async (req, res, next) => {
+const authToken = asyncHandler(async (req, res, next) => {
   let token
 
   if (
@@ -27,7 +27,7 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 })
 
-const admin = (req, res, next) => {
+const authAdmin = (req, res, next) => {
   if (req.isAdmin) {
     next()
   } else {
@@ -36,4 +36,13 @@ const admin = (req, res, next) => {
   }
 }
 
-export { protect, admin }
+const authOrder = asyncHandler(async (req, res, next) => {
+  if (!req.isAdmin && !res.locals.order.user._id.equals(req.userId)) {
+    res.status(401)
+    throw new Error('Not authorized for this order')
+  }
+
+  next()
+})
+
+export { authToken, authAdmin, authOrder }

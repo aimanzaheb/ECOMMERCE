@@ -7,14 +7,14 @@ import {
   updateProduct,
   createProduct,
 } from '../controllers/productController.js'
-import { protect, admin } from '../middleware/authMiddleware.js'
+import { authToken, authAdmin } from '../middleware/authMiddleware.js'
 
-router.route('/').get(getProducts).post(protect, admin, createProduct)
+router.route('/').get(getProducts).post(authToken, authAdmin, createProduct)
 
 router
   .route('/:id')
   .get(getProductById)
-  .delete(protect, admin, deleteProduct)
-  .put(protect, admin, updateProduct)
+  .delete(authToken, authAdmin, deleteProduct)
+  .put(authToken, authAdmin, updateProduct)
 
 export default router
