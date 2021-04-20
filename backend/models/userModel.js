@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
-import uniqueValidator from 'mongoose-unique-validator'
+// import uniqueValidator from 'mongoose-unique-validator'
 
 const userSchema = mongoose.Schema(
   {
@@ -43,9 +43,9 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt)
 })
 
-userSchema.plugin(uniqueValidator, {
-  message: 'Error, {VALUE} {PATH} already exists',
-})
+// userSchema.plugin(uniqueValidator, {
+//   message: 'Error, {VALUE} {PATH} already exists',
+// })
 
 const User = mongoose.model('User', userSchema)
 

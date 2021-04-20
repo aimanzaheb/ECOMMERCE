@@ -90,10 +90,18 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     try {
       updatedUser = await user.save() //used try catch because i cant pass callback function(err) here when using async/await
     } catch (err) {
-      if (err.errors && err.errors.email && err.errors.email.message)
-        //used mongoose-unique-validator in model for custom validation
-        throw new Error(err.errors.email.message)
-      else throw err
+      if (err.name === 'MongoError' && err.code === 11000) {
+        res.status(400)
+        throw new Error(
+          `Error 11000, Email: ${err.keyValue.email} already exists`
+        )
+      }
+
+      throw err
+
+      // if (err.errors && err.errors.email && err.errors.email.message){  //if used mongoose-unique-validator in model for custom validation
+      //   throw new Error(err.errors.email.message)
+      // }
     }
 
     res.json({

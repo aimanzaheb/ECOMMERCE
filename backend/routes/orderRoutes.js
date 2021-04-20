@@ -5,11 +5,19 @@ import {
   getOrder,
   updateOrderToPaid,
   getMyOrders,
+  getOrders,
 } from '../controllers/orderController.js'
 import { setOrderById } from '../middleware/setterMiddleware.js'
-import { authToken, authOrder } from '../middleware/authMiddleware.js'
+import {
+  authToken,
+  authOrder,
+  authAdmin,
+} from '../middleware/authMiddleware.js'
 
-router.route('/').post(authToken, addOrderItems)
+router
+  .route('/')
+  .post(authToken, addOrderItems)
+  .get(authToken, authAdmin, getOrders)
 router.route('/myorders').get(authToken, getMyOrders)
 router.route('/:id').get(authToken, setOrderById, authOrder, getOrder)
 router
