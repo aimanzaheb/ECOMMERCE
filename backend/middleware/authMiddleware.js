@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import asyncHandler from 'express-async-handler'
+import User from '../models/userModel.js'
 
 const authToken = asyncHandler(async (req, res, next) => {
   let token
@@ -11,6 +12,10 @@ const authToken = asyncHandler(async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1]
       const decoded = jwt.verify(token, process.env.JWT_SECRET) //invalid signature exception on invalid token which will be caught by catch
+
+      const user = await User.findById(decoded.userId).select('-password')
+
+      req.userName = user.name
       req.userId = decoded.userId
       req.isAdmin = decoded.isAdmin
       next()
