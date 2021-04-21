@@ -8,13 +8,21 @@ import {
   ListGroup,
   Image,
   Card,
+  Button,
   ListGroupItem,
 } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getOrderDetails, payOrder } from '../actions/orderActions'
-import { ORDER_PAY_RESET } from '../constants/orderConstants'
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from '../actions/orderActions'
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+} from '../constants/orderConstants'
 
 const OrderScreen = ({ match }) => {
   const { userInfo } = useSelector((state) => state.userLogin)
@@ -30,6 +38,9 @@ const OrderScreen = ({ match }) => {
 
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
+
+  const orderDeliver = useSelector((state) => state.orderDeliver)
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver
 
   if (order) {
     //Calculate price
@@ -74,8 +85,12 @@ const OrderScreen = ({ match }) => {
       }
       document.body.appendChild(script)
     }
-    if (!order || successPay) {
+
+    //order._id !== orderId to keep orderDetails updated if we changed cart & placed new order on placeOrder screen
+    if (!order || order._id !== orderId || successPay || successDeliver) {
       dispatch({ type: ORDER_PAY_RESET })
+      dispatch({ type: ORDER_DELIVER_RESET })
+      dispatch(getOrderDetails(orderId))
     } else if (!order.isPaid) {
       if (!window.paypal) {
         addPayPalScript()
@@ -83,14 +98,7 @@ const OrderScreen = ({ match }) => {
         setSdkReady(true)
       }
     }
-  }, [dispatch, orderId, order, successPay])
-
-  useEffect(() => {
-    if (!order || order._id !== orderId) {
-      //to keep orderDetails updated if we changed cart & placed new order on placeOrder screen
-      dispatch(getOrderDetails(orderId))
-    }
-  }, [dispatch, order, orderId])
+  }, [dispatch, orderId, order, successPay, successDeliver])
 
   const currency = new Intl.NumberFormat('en-US', {
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
@@ -98,6 +106,10 @@ const OrderScreen = ({ match }) => {
     currency: 'INR',
     minimumFractionDigits: 2,
   })
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order))
+  }
 
   if (!userInfo) {
     return <Redirect to='/login' />
@@ -229,6 +241,23 @@ const OrderScreen = ({ match }) => {
                   )}
                 </ListGroupItem>
               )}
+
+              {loadingDeliver && <Loader />}
+
+              {userInfo &&
+                userInfo.isAdmin &&
+                order.isPaid &&
+                !order.isDelivered && (
+                  <ListGroup.Item>
+                    <Button
+                      type='button'
+                      className='btn btn-block'
+                      onClick={deliverHandler}
+                    >
+                      Mark as delivered
+                    </Button>
+                  </ListGroup.Item>
+                )}
             </ListGroup>
           </Card>
         </Col>

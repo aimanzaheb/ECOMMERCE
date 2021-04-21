@@ -70,6 +70,20 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   res.json(updatedOrder)
 })
 
+//  @desc     Update order to delivered
+//  @route    GET /api/orders/:id/deliver
+//  @access   authAdmin
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
+  const order = res.locals.order
+
+  order.isDelivered = true
+  order.deliveredAt = Date.now()
+
+  const updatedOrder = await order.save()
+
+  res.json(updatedOrder)
+})
+
 //  @desc     Get logged in user orders
 //  @route    GET /api/orders/myorders
 //  @access   Private
@@ -84,4 +98,11 @@ const getMyOrders = asyncHandler(async (req, res) => {
   res.json(orders)
 })
 
-export { addOrderItems, getOrder, updateOrderToPaid, getMyOrders, getOrders }
+export {
+  addOrderItems,
+  getOrder,
+  updateOrderToPaid,
+  updateOrderToDelivered,
+  getMyOrders,
+  getOrders,
+}
