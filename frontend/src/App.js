@@ -40,6 +40,7 @@ const App = () => {
           <Route path='/admin/orderlist' component={OrderListScreen} />
           {/* cart id is optional */}
 
+          <Route path='/search/:keyword' component={HomeScreen} />
           <Route path='/' component={HomeScreen} exact />
           {/* exact - prevent HomeScreen load on url '/anything' */}
         </Container>
