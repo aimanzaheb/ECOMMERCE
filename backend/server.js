@@ -23,10 +23,6 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(express.json()) //middleware to except json data in req.body
 
-app.get('/', (req, res) => {
-  res.send('API is running')
-})
-
 app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/orders', orderRoutes)
@@ -38,6 +34,20 @@ app.get('/api/config/paypal', (req, res) => {
 
 const __dirname = path.resolve() //because __dirname is only awailable with 'require syntac' & we are using es6 'import syntax'
 app.use('/uploads', express.static(path.join(__dirname, '/uploads'))) //made uploads folder static so we can browse on browser
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/build')))
+
+  app.get(
+    '*',
+    (req, res) =>
+      res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html')) //https://ui.dev/react-router-cannot-get-url-refresh/
+  )
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...')
+  })
+}
 
 app.use(notFound) //gets called if any of the above routes not match
 app.use(errorHandler)
