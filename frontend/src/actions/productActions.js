@@ -20,14 +20,19 @@ import {
   PRODUCT_CREATE_REVIEW_FAIL,
 } from '../constants/productConstants'
 
-export const listProducts = (keyword = '') => async (dispatch, getState) => {
+export const listProducts = (keyword = '', pageNumber = '') => async (
+  dispatch,
+  getState
+) => {
   //this async returned func will be handle by redux-thunk
   //will get fire from HomeScreen.js
 
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST }) //dispatch action object to reducer from redux-thunk
 
-    const { data } = await axios.get(`/api/products?keyword=${keyword}`)
+    const { data } = await axios.get(
+      `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
+    )
 
     dispatch({
       type: PRODUCT_LIST_SUCCESS,
